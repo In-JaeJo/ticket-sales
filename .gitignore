@@ -1,0 +1,22 @@
+.DS_Store
+.idea/
+*.iml
+.env
+backend/.gradle/
+backend/.kotlin/
+backend/build/
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+*.log
+# 측정 결과표(.md)는 근거로 남기고, 실행마다 덮어쓰는 k6 요약(.json)만 뺀다
+k6/results/*.json
+
+# 본인용 메모 (면접 준비 등)
+notes/
+
+# 로컬 미리보기 설정
+.claude/
+
+# 로컬 압축 파일
+*.zip

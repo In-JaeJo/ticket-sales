@@ -1,0 +1,84 @@
+spring:
+  application:
+    name: ticket-sales
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/ticketsales?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:ticketsales}
+    password: ${MYSQL_PASSWORD:ticketsales}
+    hikari:
+      maximum-pool-size: 10
+  sql:
+    init:
+      mode: always
+  task:
+    scheduling:
+      pool:
+        # Outbox 발행기가 Kafka 응답을 기다리는 동안 SSE 방송·입장·시간 초과 취소가 멈추지 않게 스레드를 나눈다
+        size: 4
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    producer:
+      acks: all
+      properties:
+        enable.idempotence: true
+    consumer:
+      auto-offset-reset: earliest
+      # 한 묶음 처리 시간(50건 × 결제 지연 최대 2초)이 max.poll.interval.ms(5분)를 넘지 않게
+      max-poll-records: 50
+    listener:
+      # 파티션 수(3)만큼 동시에 처리한다
+      concurrency: 3
+
+server:
+  tomcat:
+    # 대기자마다 SSE 연결을 하나씩 유지한다. 기본 최대 연결 수(8192)로는 1만 명을 받지 못한다.
+    max-connections: 20000
+    accept-count: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: ticket-sales
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+ticket:
+  product-id: 1
+  initial-stock: 100
+  price: 50000
+  outbox:
+    poll-ms: 100
+  retry:
+    initial-interval-ms: 1000
+    multiplier: 2.0
+  pg:
+    failure-rate: 0.0
+    delay-ms: 0
+  order:
+    pending-timeout-seconds: 300
+  queue:
+    admission-rate: 50
+    rate-limit:
+      capacity: 5
+      refill-per-second: 1.0
