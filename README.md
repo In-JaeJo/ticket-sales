@@ -1,5 +1,7 @@
 # ticket-sales
 
+[![CI](https://github.com/In-JaeJo/ticket-sales/actions/workflows/ci.yml/badge.svg)](https://github.com/In-JaeJo/ticket-sales/actions/workflows/ci.yml)
+
 공연 티켓 1,000장에 1만 명이 동시에 몰리는 상황을 만들어 두고, 재고보다 더 팔리지 않는지와 장애가 나도 주문이 사라지지 않는지를 숫자로 확인한 백엔드 프로젝트다. 재고 차감 방식 다섯 가지를 같은 조건에서 돌려 비교했고, Kafka를 멈추거나 결제를 일부러 실패시켜 복구되는 과정도 확인했다.
 
 **기술**: Kotlin, Spring Boot, MySQL, Redis, Kafka (측정·화면은 k6, Prometheus, Grafana, React, Docker Compose)

@@ -3,7 +3,7 @@
 > 선착순 티켓 판매에서 초과 판매 0건·메시지 유실 0건을 증명하는 백엔드 포트폴리오다 (Kotlin, Spring Boot, MySQL, Redis, Kafka).
 > 설계는 [ARCHITECTURE.md](ARCHITECTURE.md)가 원본이다. 이 파일은 요약과 작업 방식만 담는다.
 > 이 파일은 AI 코딩 도구가 작업 전에 읽는 지시서다. 사람을 위한 설명과 AI 활용 방식은 [README.md](README.md)에 있다.
-> 현재 단계: 7단계까지 구현 완료. 남은 일: GitHub 첫 업로드 뒤 CI 통과 확인과 README 배지.
+> 현재 단계: 7단계까지 모두 완료(GitHub 업로드, CI 통과, README 배지 포함).
 
 ## 작업 전에 읽을 곳
 
