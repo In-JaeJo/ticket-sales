@@ -92,7 +92,9 @@ function Kpis({ s }: { s: Stats }) {
       <div className={`kpi ${s.consistent ? '' : 'bad'}`}>
         <div className="label">재고 정합성</div>
         <div className="value">{s.consistent ? '맞음' : '깨짐'}</div>
-        <div className="desc">완료 {s.completed} + 대기 {s.pending} + 재고 {s.remaining} = {s.total}</div>
+        <div className="desc">
+          완료 {s.completed} + 대기 {s.pending}{s.awaitingRestore > 0 && ` + 복구 대기 ${s.awaitingRestore}`} + 재고 {s.remaining} = {s.total}
+        </div>
       </div>
       <div className={`kpi ${waiting > 0 ? 'warn' : ''}`}>
         <div className="label">메시지 유실</div>

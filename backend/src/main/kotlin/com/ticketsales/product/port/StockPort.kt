@@ -16,6 +16,8 @@ interface StockPort {
      */
     fun restoreAfterCancel(productId: Long, orderId: Long)
     fun reset(productId: Long, quantity: Int)
+    /** 취소로 재고를 되돌린 주문 수. 취소는 커밋됐지만 아직 복구 전인 주문을 정합성 계산에서 구분하려고 쓴다. */
+    fun restoredCount(productId: Long): Long
     fun remaining(productId: Long): Int
 }
 

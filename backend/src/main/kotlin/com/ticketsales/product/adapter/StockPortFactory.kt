@@ -33,6 +33,7 @@ class StockPortFactory(
     override fun deduct(productId: Long, userId: String): DeductResult = current().deduct(productId, userId)
     override fun restoreAfterFailedOrder(productId: Long, userId: String) = current().restoreAfterFailedOrder(productId, userId)
     override fun remaining(productId: Long): Int = current().remaining(productId)
+    fun restoredCount(productId: Long): Long = current().restoredCount(productId)
     override fun total(productId: Long): Int = redis.opsForValue().get(totalKey(productId))?.toInt() ?: 0
 
     private fun totalKey(productId: Long) = "stock:total:$productId"

@@ -32,6 +32,10 @@ abstract class JdbcStockAdapter(protected val jdbc: JdbcTemplate) : StockPort {
         jdbc.update("DELETE FROM stock_restore")
     }
 
+    /** stock_restore에는 상품 구분이 없다. 상품이 하나뿐이고 리셋 때 함께 비운다. */
+    override fun restoredCount(productId: Long): Long =
+        jdbc.queryForObject("SELECT COUNT(*) FROM stock_restore", Long::class.java) ?: 0
+
     override fun remaining(productId: Long): Int =
         jdbc.queryForObject("SELECT quantity FROM stock WHERE product_id = ?", Int::class.java, productId) ?: 0
 }

@@ -220,7 +220,7 @@ failure() {
   say "결과"
   local s; s="$(stats)"
   [ "$(field oversold "$s")" = "0" ] && ok "초과 판매 0" || fail "초과 판매 발생"
-  [ "$(field consistent "$s")" = "true" ] && ok "정합성: 완료 + 결제 대기 + 남은 재고 = 전체 재고" || fail "정합성 깨짐"
+  [ "$(field consistent "$s")" = "true" ] && ok "정합성: 완료 + 결제 대기 + 복구 대기 + 남은 재고 = 전체 재고" || fail "정합성 깨짐"
   ok "메시지 유실 0, 중복 처리 0"
 }
 

@@ -37,7 +37,8 @@ class PlaceOrderUseCase(
         try {
             return writer.place(userId, productId, runId, deductInside = false)
         } catch (e: Exception) {
-            stock.restoreAfterFailedOrder(productId, userId)
+            // 복구가 실패해도(Redis 순단) 원래 예외를 던진다. 복구 실패는 원래 예외에 덧붙여 원인이 가려지지 않게 한다
+            runCatching { stock.restoreAfterFailedOrder(productId, userId) }.onFailure { e.addSuppressed(it) }
             throw e
         }
     }

@@ -19,6 +19,7 @@ export type Stats = {
   pending: number;
   completed: number;
   cancelled: number;
+  awaitingRestore: number;
   oversold: number;
   consistent: boolean;
   waiting: number;

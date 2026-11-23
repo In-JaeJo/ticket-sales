@@ -32,6 +32,23 @@ class DemoApiTest : IntegrationTest() {
     }
 
     @Test
+    fun `취소됐지만 아직 재고 복구 전인 주문도 정합성이 맞다고 본다`() {
+        fun stats() = mvc.get("/api/demo/stats").andReturn().response.contentAsString
+        relay.paused = true
+        grantPass("u1")
+        val (_, id) = placeOrder("u1")
+        timeoutScheduler.timeout = java.time.Duration.ZERO
+        eventually { assertEquals("CANCELLED", orderStatus(id!!)) }
+        // order.cancelled가 Outbox에 묶여 있어 재고는 아직 그대로
+        assertEquals(initialStock - 1, stock())
+        assertTrue(stats().contains("\"consistent\":true"), "복구 대기 중에도 깨짐으로 보이면 안 된다: ${stats()}")
+
+        relay.paused = false
+        eventually { assertEquals(initialStock, stock()) }
+        assertTrue(stats().contains("\"consistent\":true"), "복구 뒤에도 맞아야 한다: ${stats()}")
+    }
+
+    @Test
     fun `PG 장애를 켜면 현황에 보이고 해소하면 사라진다`() {
         fun stats() = mvc.get("/api/demo/stats").andReturn().response.contentAsString
         assertTrue(stats().contains("\"pgDown\":false"), "처음에는 꺼져 있어야 한다")

@@ -32,6 +32,8 @@ class RedisLuaStockAdapter(private val redis: StringRedisTemplate) : StockPort {
         redis.delete(listOf(boughtKey(productId), restoredKey(productId)))
     }
 
+    override fun restoredCount(productId: Long): Long = redis.opsForSet().size(restoredKey(productId)) ?: 0
+
     override fun remaining(productId: Long): Int = redis.opsForValue().get(stockKey(productId))?.toInt() ?: 0
 
     private fun stockKey(productId: Long) = "stock:$productId"

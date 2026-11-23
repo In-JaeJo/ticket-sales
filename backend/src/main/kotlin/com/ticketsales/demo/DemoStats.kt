@@ -28,9 +28,11 @@ data class StatsResponse(
     val pending: Long,
     val completed: Long,
     val cancelled: Long,
+    /** 취소는 커밋됐지만 order.cancelled가 아직 처리되지 않아 재고가 돌아오지 않은 주문 수. 처리가 다 끝나면 0 */
+    val awaitingRestore: Long,
     /** 취소되지 않은 주문이 전체 재고보다 많은 수. 안전한 방식에서는 항상 0이어야 한다. */
     val oversold: Long,
-    /** 완료 + 결제 대기 + 남은 재고 = 전체 재고 */
+    /** 완료 + 결제 대기 + 복구 대기 취소 + 남은 재고 = 전체 재고 */
     val consistent: Boolean,
     val waiting: Long,
     val cursor: Long,
@@ -86,6 +88,7 @@ class DemoStats(
         val cancelled = counts["CANCELLED"] ?: 0
         val total = stocks.total(productId)
         val remaining = stocks.remaining(productId)
+        val awaitingRestore = (cancelled - stocks.restoredCount(productId)).coerceAtLeast(0)
         val pool = dataSource.unwrap(HikariDataSource::class.java)
         val crowdRequest = crowd.request()
         return StatsResponse(
@@ -98,8 +101,9 @@ class DemoStats(
             pending = pending,
             completed = completed,
             cancelled = cancelled,
+            awaitingRestore = awaitingRestore,
             oversold = (pending + completed - total).coerceAtLeast(0),
-            consistent = completed + pending + remaining == total.toLong(),
+            consistent = completed + pending + awaitingRestore + remaining == total.toLong(),
             waiting = queue.waitingCount(),
             cursor = queue.cursor(),
             sseConnections = queueHub.connectionCount(),
